@@ -13,7 +13,7 @@ class Vec2
 		Vec2 operator* (const float k) const;
 		Vec2& operator*= (const float k);
 
-	private:
+	public:
 		float x;
 		float y;
 
