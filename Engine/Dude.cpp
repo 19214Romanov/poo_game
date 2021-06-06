@@ -347,24 +347,39 @@ void Dude::Draw( Graphics& gfx ) const
 	gfx.PutPixel( 12 + x,19 + y,0,0,0 );
 }
 
-void Dude::Update( const Keyboard & kbd, float dt)
+void Dude::Update( const Keyboard & kbd, float dt, const Mouse& mouse)
 {
+	Vec2 vel(0.0f, 0.0f);
 	if( kbd.KeyIsPressed( VK_RIGHT ) )
 	{
-		pos.x += speed*dt;
+		vel.x += 1.0f;
 	}
 	if( kbd.KeyIsPressed( VK_LEFT ) )
 	{
-		pos.x -= speed*dt;
+		vel.x -= 1.0f;
 	}
 	if( kbd.KeyIsPressed( VK_DOWN ) )
 	{
-		pos.y += speed*dt;
+		vel.y += 1.0f;
 	}
 	if( kbd.KeyIsPressed( VK_UP ) )
 	{
-		pos.y -= speed*dt;
+		vel.y -= 1.0f;
 	}
+
+	if(mouse.LeftIsPressed()) 
+	{
+		Vec2 placeClick(float(mouse.GetPosX()), float(mouse.GetPosY()));
+		Vec2 centerOfDude(pos.x + width/2.0f, pos.y + height/2.0f);
+		placeClick = placeClick - centerOfDude;
+		if(placeClick.GetLengthSq() > 2.0f) //в радиусе нажатия sqrt(2) от dude, он не будет реагировать на нажатие
+		{
+			placeClick = placeClick.GetNormalized();
+			vel += placeClick * dt * speed;
+		}
+	}
+
+	pos += vel.Normalize()*speed*dt;
 }
 
 Vec2 Dude::GetPos() const
